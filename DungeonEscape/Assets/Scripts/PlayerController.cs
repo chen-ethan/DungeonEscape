@@ -6,11 +6,14 @@ public class PlayerController : MonoBehaviour {
 
 	protected Joystick joystick;
 	public float joyStickSens;
+
+	public bool hasKey;
 	// Use this for initialization
 	void Start () {
 		joystick = FindObjectOfType<Joystick>();
-		
 		//joybutton = FindObjectOfType<JoyButton>();
+		hasKey = false;
+
 	}
 	
 	// Update is called once per frame
@@ -29,5 +32,19 @@ public class PlayerController : MonoBehaviour {
 			rigidbody.velocity = moveVector * joyStickSens;
 		
 		}
+	}
+
+	void OnTriggerEnter2D(Collider2D other){
+		Debug.Log("Collided");
+		if(!hasKey && other.gameObject.CompareTag("Key")){
+			hasKey = true;
+			Destroy(other.gameObject);
+		}
+		if(hasKey && other.gameObject.CompareTag("Door")){
+			hasKey = false;
+			Destroy(other.gameObject);
+			Debug.Log("Next Level")l
+		}
+
 	}
 }

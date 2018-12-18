@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour {
 
+
+	public Animator animator;
 	protected Joystick joystick;
 	public float joyStickSens;
 	public int level;
@@ -13,6 +15,8 @@ public class PlayerController : MonoBehaviour {
 	public Sprite defaultSprite;
 	
 	public Sprite hermesSprite;
+	private float powerTimer;
+	public float powerCooldown;
 
 	public GameObject spawn;
 	public bool hasKey;
@@ -32,7 +36,16 @@ public class PlayerController : MonoBehaviour {
 	void FixedUpdate () {
 
 		var rigidbody = GetComponent<Rigidbody2D>();
-		
+		if(power != "neutral"){
+			powerTimer += Time.deltaTime;
+		}
+
+		if(powerTimer >= powerCooldown && power!="neutral"){
+			power = "neutral";
+			joyStickSens /= 1.5f;
+			this.GetComponent<SpriteRenderer>().sprite = defaultSprite;
+
+		}
 		/*rigidbody.velocity = new Vector2(joystick.Horizontal * joyStickSens,
 										joystick.Vertical * joyStickSens);
 		*/
@@ -42,6 +55,30 @@ public class PlayerController : MonoBehaviour {
 			//transform.rotation = Quaternion.LookRotation(Vector3.forward, moveVector);
 			//transform.Translate(moveVector * joyStickSens * Time.deltaTime, Space.World);
 			rigidbody.velocity = moveVector * joyStickSens;
+
+			//animation code
+			animator.SetFloat("Speed", Mathf.Abs(moveVector.x) +Mathf.Abs(moveVector.y));
+			if(moveVector.y<0 && Mathf.Abs(moveVector.y)>Mathf.Abs(moveVector.x)){
+				animator.SetBool("Down",true);
+				animator.SetBool("Up",false);
+				animator.SetBool("Right",false);
+				animator.SetBool("Left",false);
+			}else if(moveVector.y>0 && Mathf.Abs(moveVector.y)>Mathf.Abs(moveVector.x)){
+				animator.SetBool("Down",false);
+				animator.SetBool("Up",true);
+				animator.SetBool("Right",false);
+				animator.SetBool("Left",false);
+			}else if(moveVector.x>0 && Mathf.Abs(moveVector.x)>Mathf.Abs(moveVector.y)){
+				animator.SetBool("Down",false);
+				animator.SetBool("Up",false);
+				animator.SetBool("Right",true);
+				animator.SetBool("Left",false);
+			}else if(moveVector.x<0 && Mathf.Abs(moveVector.x)>Mathf.Abs(moveVector.y)){
+				animator.SetBool("Down",false);
+				animator.SetBool("Up",false);
+				animator.SetBool("Right",false);
+				animator.SetBool("Left",true);
+			}
 		
 		}
 	}
@@ -65,6 +102,7 @@ public class PlayerController : MonoBehaviour {
 			Destroy(other.gameObject);
 			joyStickSens *= 1.5f;
 			this.GetComponent<SpriteRenderer>().sprite = hermesSprite;
+			powerTimer = 0.0f;
 
 		}
 

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Key
   - Door
+  - Shoe
   layers:
   - Default
   - TransparentFX

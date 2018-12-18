@@ -1,15 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerController : MonoBehaviour {
 
 	protected Joystick joystick;
 	public float joyStickSens;
+	public int level;
 
+	public Sprite defaultSprite;
+	
+	public Sprite hermesSprite;
+
+	public GameObject spawn;
 	public bool hasKey;
+
+	public string power;
 	// Use this for initialization
 	void Start () {
+		DontDestroyOnLoad(this.gameObject);
+		setToSpawn();
 		joystick = FindObjectOfType<Joystick>();
 		//joybutton = FindObjectOfType<JoyButton>();
 		hasKey = false;
@@ -43,8 +55,22 @@ public class PlayerController : MonoBehaviour {
 		if(hasKey && other.gameObject.CompareTag("Door")){
 			hasKey = false;
 			Destroy(other.gameObject);
-			Debug.Log("Next Level")l
+			Debug.Log("Next Level");
+			level++;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+			setToSpawn();
+		}
+		if(other.gameObject.CompareTag("Shoe")){
+			power = "Speed";
+			Destroy(other.gameObject);
+			joyStickSens *= 1.5f;
+			this.GetComponent<SpriteRenderer>().sprite = hermesSprite;
+
 		}
 
+	}
+	void setToSpawn(){
+		spawn = GameObject.FindGameObjectsWithTag("Respawn")[0];
+		transform.position = spawn.transform.position;
 	}
 }

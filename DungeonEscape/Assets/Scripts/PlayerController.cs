@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour {
 	public bool hasKey;
 
 	public string power;
+
+	Rigidbody2D rigidbody;
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this.gameObject);
@@ -32,6 +34,7 @@ public class PlayerController : MonoBehaviour {
 		//joybutton = FindObjectOfType<JoyButton>();
 		hasKey = false;
 		animator.SetBool("Neutral",true);
+		rigidbody =  GetComponent<Rigidbody2D>(); 
 		
 
 
@@ -40,7 +43,8 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-		var rigidbody = GetComponent<Rigidbody2D>();
+		//var rigidbody = GetComponent<Rigidbody2D>();
+
 		if(power != "neutral"){
 			powerTimer += Time.deltaTime;
 		}
@@ -120,7 +124,7 @@ public class PlayerController : MonoBehaviour {
 		//Debug.Log("Spawn position: "+ spawn.transform.position);
 		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		spawn = GameObject.FindGameObjectsWithTag("Respawn")[0];
-		//Debug.Log("Spawn position 2: "+ spawn.transform.position);
+//Debug.Log("Spawn position 2: "+ spawn.transform.position);
 
 		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		transform.position = spawn.transform.position;

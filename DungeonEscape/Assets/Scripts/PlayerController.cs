@@ -12,9 +12,9 @@ public class PlayerController : MonoBehaviour {
 	public float joyStickSens;
 	public int level;
 
-	public Sprite defaultSprite;
+	//public Sprite defaultSprite;
 	
-	public Sprite hermesSprite;
+	//public Sprite hermesSprite;
 	private float powerTimer;
 	public float powerCooldown;
 
@@ -25,11 +25,14 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this.gameObject);
+		level = 1;
+		Debug.Log("level: "+ level);
 		setToSpawn();
 		joystick = FindObjectOfType<Joystick>();
 		//joybutton = FindObjectOfType<JoyButton>();
 		hasKey = false;
 		animator.SetBool("Neutral",true);
+		
 
 
 	}
@@ -47,7 +50,7 @@ public class PlayerController : MonoBehaviour {
 			animator.SetBool("Hermes",false);
 			animator.SetBool("Neutral",true);
 			joyStickSens /= 1.5f;
-			this.GetComponent<SpriteRenderer>().sprite = defaultSprite;
+			//this.GetComponent<SpriteRenderer>().sprite = defaultSprite;
 
 		}
 		/*rigidbody.velocity = new Vector2(joystick.Horizontal * joyStickSens,
@@ -95,8 +98,10 @@ public class PlayerController : MonoBehaviour {
 			hasKey = false;
 			Destroy(other.gameObject);
 			Debug.Log("Next Level");
-			level++;
+			this.level++;
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+			//
+			//GameObject.FindGameObjectsWithTag("Respawn")[0].SetActive(false);
 			setToSpawn();
 		}
 		if(other.gameObject.CompareTag("Shoe")){
@@ -112,7 +117,12 @@ public class PlayerController : MonoBehaviour {
 
 	}
 	void setToSpawn(){
+		//Debug.Log("Spawn position: "+ spawn.transform.position);
+		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		spawn = GameObject.FindGameObjectsWithTag("Respawn")[0];
+		//Debug.Log("Spawn position 2: "+ spawn.transform.position);
+
+		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		transform.position = spawn.transform.position;
 	}
 }

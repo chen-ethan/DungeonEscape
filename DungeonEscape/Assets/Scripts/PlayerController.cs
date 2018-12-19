@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour {
 		joystick = FindObjectOfType<Joystick>();
 		//joybutton = FindObjectOfType<JoyButton>();
 		hasKey = false;
+		animator.SetBool("Neutral",true);
+
 
 	}
 	
@@ -42,6 +44,8 @@ public class PlayerController : MonoBehaviour {
 
 		if(powerTimer >= powerCooldown && power!="neutral"){
 			power = "neutral";
+			animator.SetBool("Hermes",false);
+			animator.SetBool("Neutral",true);
 			joyStickSens /= 1.5f;
 			this.GetComponent<SpriteRenderer>().sprite = defaultSprite;
 
@@ -51,36 +55,34 @@ public class PlayerController : MonoBehaviour {
 		*/
 		Vector3 moveVector = (Vector3.right * joystick.Horizontal + Vector3.up * joystick.Vertical);
 
-		if(moveVector != Vector3.zero){
-			//transform.rotation = Quaternion.LookRotation(Vector3.forward, moveVector);
-			//transform.Translate(moveVector * joyStickSens * Time.deltaTime, Space.World);
-			rigidbody.velocity = moveVector * joyStickSens;
-
-			//animation code
-			animator.SetFloat("Speed", Mathf.Abs(moveVector.x) +Mathf.Abs(moveVector.y));
-			if(moveVector.y<0 && Mathf.Abs(moveVector.y)>Mathf.Abs(moveVector.x)){
-				animator.SetBool("Down",true);
-				animator.SetBool("Up",false);
-				animator.SetBool("Right",false);
-				animator.SetBool("Left",false);
-			}else if(moveVector.y>0 && Mathf.Abs(moveVector.y)>Mathf.Abs(moveVector.x)){
-				animator.SetBool("Down",false);
-				animator.SetBool("Up",true);
-				animator.SetBool("Right",false);
-				animator.SetBool("Left",false);
-			}else if(moveVector.x>0 && Mathf.Abs(moveVector.x)>Mathf.Abs(moveVector.y)){
-				animator.SetBool("Down",false);
-				animator.SetBool("Up",false);
-				animator.SetBool("Right",true);
-				animator.SetBool("Left",false);
-			}else if(moveVector.x<0 && Mathf.Abs(moveVector.x)>Mathf.Abs(moveVector.y)){
-				animator.SetBool("Down",false);
-				animator.SetBool("Up",false);
-				animator.SetBool("Right",false);
-				animator.SetBool("Left",true);
-			}
-		
+		//transform.rotation = Quaternion.LookRotation(Vector3.forward, moveVector);
+		//transform.Translate(moveVector * joyStickSens * Time.deltaTime, Space.World);
+		rigidbody.velocity = moveVector * joyStickSens;
+		//animation code
+		animator.SetFloat("Speed", Mathf.Abs(moveVector.x) +Mathf.Abs(moveVector.y));
+		if(moveVector.y<0 && Mathf.Abs(moveVector.y)>Mathf.Abs(moveVector.x)){
+			animator.SetBool("Down",true);
+			animator.SetBool("Up",false);
+			animator.SetBool("Right",false);
+			animator.SetBool("Left",false);
+		}else if(moveVector.y>0 && Mathf.Abs(moveVector.y)>Mathf.Abs(moveVector.x)){
+			animator.SetBool("Down",false);
+			animator.SetBool("Up",true);
+			animator.SetBool("Right",false);
+			animator.SetBool("Left",false);
+		}else if(moveVector.x>0 && Mathf.Abs(moveVector.x)>Mathf.Abs(moveVector.y)){
+			animator.SetBool("Down",false);
+			animator.SetBool("Up",false);
+			animator.SetBool("Right",true);
+			animator.SetBool("Left",false);
+		}else if(moveVector.x<0 && Mathf.Abs(moveVector.x)>Mathf.Abs(moveVector.y)){
+			animator.SetBool("Down",false);
+			animator.SetBool("Up",false);
+			animator.SetBool("Right",false);
+			animator.SetBool("Left",true);
 		}
+		
+		
 	}
 
 	void OnTriggerEnter2D(Collider2D other){
@@ -101,7 +103,9 @@ public class PlayerController : MonoBehaviour {
 			power = "Speed";
 			Destroy(other.gameObject);
 			joyStickSens *= 1.5f;
-			this.GetComponent<SpriteRenderer>().sprite = hermesSprite;
+			animator.SetBool("Neutral",false);
+			animator.SetBool("Hermes",true);
+			//this.GetComponent<SpriteRenderer>().sprite = hermesSprite;
 			powerTimer = 0.0f;
 
 		}

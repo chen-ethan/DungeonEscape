@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class PlayerController : MonoBehaviour {
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour {
 	public int level;
 
 	public int Health;
+	public Image[] Hearts;
 	private float powerTimer;
 	public float powerCooldown;
 
@@ -36,6 +38,9 @@ public class PlayerController : MonoBehaviour {
 		animator.SetBool("Neutral",true);
 		rigidbody =  GetComponent<Rigidbody2D>(); 
 		controlsActive = true;
+		for(int i = 0; i < Health; ++i){
+			Hearts[i].GetComponent<Image>().enabled = true;
+		}
 	}
 	
 	// Update is called once per frame
@@ -86,12 +91,18 @@ public class PlayerController : MonoBehaviour {
 
 		if(other.gameObject.CompareTag("Enemy")){
 			Debug.Log("Collided with enemy");
-
-			Health--;
-			enableAllObjects();
-			resetPower();
-			setToSpawn();
+			TakeDamage();
 		}
+	}
+
+	void TakeDamage(){
+			Health--;
+			Hearts[Health].GetComponent<Image>().enabled = false;
+			if(Health>0){
+				enableAllObjects();
+				resetPower();
+				setToSpawn();
+			}
 	}
 	void OnTriggerEnter2D(Collider2D other){
 		//Debug.Log("Collided");

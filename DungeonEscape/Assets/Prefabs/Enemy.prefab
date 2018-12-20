@@ -118,7 +118,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e8b6b0886441641a99374c68d2f7c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkPoints: []
+  animator: {fileID: 95170011660188886}
+  walkPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   currentPoint: 0
   speed: 3
   direction: 

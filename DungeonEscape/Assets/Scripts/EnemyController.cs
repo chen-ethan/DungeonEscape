@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour {
 
 	// Use this for initialization
+	public Animator animator;
+
 	public GameObject[] walkPoints;
 	public int currentPoint;
 
@@ -44,10 +46,7 @@ public class EnemyController : MonoBehaviour {
 		
 	}
 	void OnTriggerEnter2D(Collider2D other){
-		Debug.Log("got trigger");
 		if(other == walkPoints[currentPoint].GetComponent<Collider2D>()){
-			Debug.Log("got current point trigger");
-
 			currentPoint = (currentPoint + 1)% walkPoints.Length;
 			direction = getDirection();
 		}
@@ -57,15 +56,32 @@ public class EnemyController : MonoBehaviour {
 		float y_away = walkPoints[currentPoint].transform.position.y - transform.position.y;
 		if(Mathf.Abs(x_away) > Mathf.Abs(y_away)){
 			if(x_away < 0){
+				animator.SetBool("Down",false);
+				animator.SetBool("Up",false);
+				animator.SetBool("Right",false);
+				animator.SetBool("Left",true);
 				return "Left";
 			}else{
+				animator.SetBool("Down",false);
+				animator.SetBool("Up",false);
+				animator.SetBool("Right",true);
+				animator.SetBool("Left",false);
 				return "Right";
 			}
 		}else{
 			if(y_away < 0){
+				animator.SetBool("Down",true);
+				animator.SetBool("Up",false);
+				animator.SetBool("Right",false);
+				animator.SetBool("Left",false);
 				return "Down";
 			}else{
+				animator.SetBool("Down",false);
+				animator.SetBool("Up",true);
+				animator.SetBool("Right",false);
+				animator.SetBool("Left",false);
 				return "Up";
+
 			}
 		}
 	}

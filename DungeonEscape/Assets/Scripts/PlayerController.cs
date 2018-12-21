@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour {
 	public float powerCooldown;
 
 	public float FireCooldown;
+	public Rigidbody2D FireBall; 
 
 
 	public GameObject spawn;
@@ -201,8 +202,23 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void usePower(){
+		Debug.Log("usePower:");
+
 		if(power == "Fire"){
 			Debug.Log("FIREBALL");
+			if(animator.GetBool("Up") == true){
+				Rigidbody2D clone;
+				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,90));
+			}else if(animator.GetBool("Up") == true){
+				Rigidbody2D clone;
+				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,270));
+			}else if(animator.GetBool("Right") == true){
+				Rigidbody2D clone;
+				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,0));
+			}else if(animator.GetBool("Left") == true){
+				Rigidbody2D clone;
+				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,180));
+			}
 		}
 	}
 

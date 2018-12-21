@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - FireBall
   - Wand
+  - Wall
   layers:
   - Default
   - TransparentFX

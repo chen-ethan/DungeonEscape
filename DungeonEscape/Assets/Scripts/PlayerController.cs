@@ -209,7 +209,7 @@ public class PlayerController : MonoBehaviour {
 			if(animator.GetBool("Up") == true){
 				Rigidbody2D clone;
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,90));
-			}else if(animator.GetBool("Up") == true){
+			}else if(animator.GetBool("Down") == true){
 				Rigidbody2D clone;
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,270));
 			}else if(animator.GetBool("Right") == true){

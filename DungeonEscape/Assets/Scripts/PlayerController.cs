@@ -10,6 +10,13 @@ public class PlayerController : MonoBehaviour {
 
 	public Animator animator;
 	protected Joystick joystick;
+	protected JoyButton joybutton;
+
+
+	protected bool buttonDown;
+	private float buttonTimer;
+	private float buttonCooldown;
+
 	public float joyStickSens;
 	public int level;
 
@@ -17,6 +24,9 @@ public class PlayerController : MonoBehaviour {
 	public Image[] Hearts;
 	private float powerTimer;
 	public float powerCooldown;
+
+	public float FireCooldown;
+
 
 	public GameObject spawn;
 	public bool hasKey;
@@ -33,7 +43,7 @@ public class PlayerController : MonoBehaviour {
 		Debug.Log("level: "+ level);
 		setToSpawn();
 		joystick = FindObjectOfType<Joystick>();
-		//joybutton = FindObjectOfType<JoyButton>();
+		joybutton = FindObjectOfType<JoyButton>();
 		hasKey = false;
 		animator.SetBool("Neutral",true);
 		rigidbody =  GetComponent<Rigidbody2D>(); 
@@ -41,6 +51,7 @@ public class PlayerController : MonoBehaviour {
 		for(int i = 0; i < Health; ++i){
 			Hearts[i].GetComponent<Image>().enabled = true;
 		}
+		buttonTimer = 0.0f;
 	}
 	
 	// Update is called once per frame
@@ -51,9 +62,18 @@ public class PlayerController : MonoBehaviour {
 
 			if(power != "neutral"){
 				powerTimer += Time.deltaTime;
+				buttonTimer += Time.deltaTime;
 			}
 			if(powerTimer >= powerCooldown && power!="neutral"){
 				resetPower();
+			}
+			if(!buttonDown && joybutton.pressed == true&&buttonTimer >= buttonCooldown&&power!="neutral"){
+				buttonDown = true;
+				buttonTimer = 0.0f;
+				usePower();
+			}
+			if(buttonDown && joybutton.pressed == false){
+				buttonDown = false;
 			}
 			Vector3 moveVector = (Vector3.right * joystick.Horizontal + Vector3.up * joystick.Vertical);
 
@@ -96,6 +116,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void TakeDamage(){
+		if(Health>0){
 			Health--;
 			Hearts[Health].GetComponent<Image>().enabled = false;
 			if(Health>0){
@@ -103,6 +124,7 @@ public class PlayerController : MonoBehaviour {
 				resetPower();
 				setToSpawn();
 			}
+		}
 	}
 	void OnTriggerEnter2D(Collider2D other){
 		//Debug.Log("Collided");
@@ -121,6 +143,7 @@ public class PlayerController : MonoBehaviour {
 			setToSpawn();
 		}
 		if(other.gameObject.CompareTag("Shoe")){
+			resetPower();
 			power = "Hermes";
 			joyStickSens *= 1.5f;
 			animator.SetBool("Neutral",false);
@@ -130,11 +153,20 @@ public class PlayerController : MonoBehaviour {
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
 		}
+		if(other.gameObject.CompareTag("FireBall")){
+			resetPower();
+			power = "Fire";
+			animator.SetBool("Neutral",false);
+			animator.SetBool("Fire",true);
+			powerTimer = 0.0f;
+			buttonCooldown = FireCooldown;
+			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+
+		}
 
 	}
 	void setToSpawn(){
-		//Debug.Log("Spawn position: "+ spawn.transform.position);
-		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		hasKey = false;
 		//resetPower();
 		
@@ -160,11 +192,23 @@ public class PlayerController : MonoBehaviour {
 			animator.SetBool("Hermes",false);
 			animator.SetBool("Neutral",true);
 			joyStickSens /= 1.5f;
+		}else if(power == "Fire"){
+			power = "neutral";
+			animator.SetBool("Fire",false);
+			animator.SetBool("Neutral",true);
+		}
+
+	}
+
+	void usePower(){
+		if(power == "Fire"){
+			Debug.Log("FIREBALL");
 		}
 	}
 
 	void GameOver(){
 		if(controlsActive){
+			animator.SetBool("Hermes",false);
 			animator.SetBool("Neutral",false);
 			animator.SetBool("Dead",true);
 			Canvas UI = Object.FindObjectOfType<Canvas>();

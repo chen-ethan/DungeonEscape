@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4914082048914526}
   - component: {fileID: 212740697135728336}
   - component: {fileID: 61822319241771570}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: hermes_shoe
   m_TagString: Shoe
   m_Icon: {fileID: 0}
@@ -34,8 +34,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1241320180980674}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.4, y: 2.591, z: -1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 3.25, y: -1.65, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

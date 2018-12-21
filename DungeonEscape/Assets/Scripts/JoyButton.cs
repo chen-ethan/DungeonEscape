@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public class JoyButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 
 	[HideInInspector]
-	protected bool pressed;
+	public bool pressed;
 	void Start () {
 		
 	}

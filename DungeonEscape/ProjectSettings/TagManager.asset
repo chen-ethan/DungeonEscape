@@ -8,6 +8,8 @@ TagManager:
   - Door
   - Shoe
   - Enemy
+  - FireBall
+  - Wand
   layers:
   - Default
   - TransparentFX

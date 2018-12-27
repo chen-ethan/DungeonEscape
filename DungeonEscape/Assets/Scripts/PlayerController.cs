@@ -7,10 +7,12 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-
+	public EnemyController enemyController;
 	public Animator animator;
+	Canvas UI;
 	protected Joystick joystick;
 	protected JoyButton joybutton;
+	private bool buttonOn;
 
 
 	protected bool buttonDown;
@@ -22,10 +24,18 @@ public class PlayerController : MonoBehaviour {
 
 	public int Health;
 	public Image[] Hearts;
+	private bool startTimer;
 	private float powerTimer;
-	public float powerCooldown;
+	public float hermesTimer;
+	public float wizardTimer;
+	private float powerCooldown;
 
-	public float FireCooldown;
+//	public float FireCooldown;
+
+	private int buttonStock;
+	public int fireballStock;
+	public int wizardStock;
+
 	public Rigidbody2D FireBall; 
 
 
@@ -42,9 +52,14 @@ public class PlayerController : MonoBehaviour {
 		DontDestroyOnLoad(this.gameObject);
 		level = 1;
 		Debug.Log("level: "+ level);
+		UI = Object.FindObjectOfType<Canvas>();
+		//UI.transform.GetChild(1).gameObject.SetActive(false);
+
 		setToSpawn();
 		joystick = FindObjectOfType<Joystick>();
 		joybutton = FindObjectOfType<JoyButton>();
+		buttonOn = false;
+		buttonDown = false;
 		hasKey = false;
 		animator.SetBool("Neutral",true);
 		rigidbody =  GetComponent<Rigidbody2D>(); 
@@ -53,28 +68,55 @@ public class PlayerController : MonoBehaviour {
 			Hearts[i].GetComponent<Image>().enabled = true;
 		}
 		buttonTimer = 0.0f;
+		startTimer = false;
 	}
-	
+	//-----------------------------------------------------------------------------------------------------
+
 	// Update is called once per frame
 	void FixedUpdate () {
 		if(Health <= 0){
 			GameOver();
 		}else{
 
-			if(power != "neutral"){
+			if(startTimer){
 				powerTimer += Time.deltaTime;
-				buttonTimer += Time.deltaTime;
+				//buttonTimer += Time.deltaTime;
+				if(powerTimer >= powerCooldown){
+					Debug.Log("powerTimer up");
+					resetPower();
+				}
 			}
-			if(powerTimer >= powerCooldown && power!="neutral"){
-				resetPower();
-			}
-			if(!buttonDown && joybutton.pressed == true&&buttonTimer >= buttonCooldown&&power!="neutral"){
-				buttonDown = true;
-				buttonTimer = 0.0f;
-				usePower();
-			}
-			if(buttonDown && joybutton.pressed == false){
-				buttonDown = false;
+
+			if(buttonOn){
+				if(buttonStock > 0){
+					if(!buttonDown && joybutton.pressed == true&&/* buttonTimer >= buttonCooldown&& */ power!="neutral"){
+						buttonDown = true;
+						//buttonTimer = 0.0f;
+						buttonStock--;
+						usePower();
+					}
+					if(buttonDown && joybutton.pressed == false){
+						buttonDown = false;
+					}
+				}else{
+					switch(power){
+						case "Wizard":
+							Debug.Log("Used all Wizard Stock");
+							powerTimer = 0.0f;
+							powerCooldown = wizardTimer;
+							startTimer = true;
+							buttonDown = false;
+							buttonOn = false;
+							UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
+							UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;
+							joybutton.pressed = false;
+							break;
+						case "Fire":
+							Debug.Log("Used all Fire Stock");
+							resetPower();
+							break;
+					}
+				}
 			}
 			Vector3 moveVector = (Vector3.right * joystick.Horizontal + Vector3.up * joystick.Vertical);
 
@@ -107,6 +149,7 @@ public class PlayerController : MonoBehaviour {
 		}		
 		
 	}
+	//-----------------------------------------------------------------------------------------------------
 	void OnCollisionEnter2D(Collision2D other){
 		Debug.Log("Collider");
 
@@ -115,6 +158,7 @@ public class PlayerController : MonoBehaviour {
 			TakeDamage();
 		}
 	}
+	//-----------------------------------------------------------------------------------------------------
 
 	void TakeDamage(){
 		if(Health>0){
@@ -127,6 +171,7 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
+	//-----------------------------------------------------------------------------------------------------
 	void OnTriggerEnter2D(Collider2D other){
 		//Debug.Log("Collided");
 		if(!hasKey && other.gameObject.CompareTag("Key")){
@@ -134,49 +179,68 @@ public class PlayerController : MonoBehaviour {
 			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
-		}
-		if(hasKey && other.gameObject.CompareTag("Door")){
+		}else if(hasKey && other.gameObject.CompareTag("Door")){
 			hasKey = false;
 			Destroy(other.gameObject);
 			Debug.Log("Next Level");
 			this.level++;
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 			setToSpawn();
-		}
-		if(other.gameObject.CompareTag("Shoe")){
+		}else if(other.gameObject.CompareTag("Shoe")){
 			resetPower();
 			power = "Hermes";
 			joyStickSens *= 1.5f;
 			animator.SetBool("Neutral",false);
 			animator.SetBool("Hermes",true);
 			powerTimer = 0.0f;
+			startTimer = true;
+			powerCooldown = hermesTimer;
 			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
-		}
-		if(other.gameObject.CompareTag("FireBall")){
+		}else if(other.gameObject.CompareTag("FireBall")){
 			resetPower();
+			UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
+			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = true;
+			buttonOn = true;
 			power = "Fire";
 			animator.SetBool("Neutral",false);
 			animator.SetBool("Fire",true);
-			powerTimer = 0.0f;
-			buttonCooldown = FireCooldown;
+			//buttonCooldown = FireCooldown;
+			buttonStock = fireballStock;
 			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+
+		}else if(other.gameObject.CompareTag("Wand")){
+			resetPower();
+			//enable button TODO: change sprite
+			UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
+			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = true;
+			buttonOn = true;
+			power = "Wizard";
+			animator.SetBool("Neutral",false);
+			animator.SetBool("Wizard",true);
+			buttonStock = wizardStock;
+			//buttonCooldown = FireCooldown;
+			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+
 
 		}
 
 	}
+	//-----------------------------------------------------------------------------------------------------
 	void setToSpawn(){
 		hasKey = false;
 		//resetPower();
 		
 		spawn = GameObject.FindGameObjectsWithTag("Respawn")[0];
-//Debug.Log("Spawn position 2: "+ spawn.transform.position);
+		//Debug.Log("Spawn position 2: "+ spawn.transform.position);
 
 		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		transform.position = spawn.transform.position;
 	}
+	//-----------------------------------------------------------------------------------------------------
 
 	void enableAllObjects(){
 		foreach (SpriteRenderer GO in GameObject.FindObjectsOfType<SpriteRenderer>()){
@@ -186,8 +250,10 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
+	//-----------------------------------------------------------------------------------------------------
 
 	void resetPower(){
+		startTimer = false;
 		if(power == "Hermes"){
 			power = "neutral";
 			animator.SetBool("Hermes",false);
@@ -197,37 +263,59 @@ public class PlayerController : MonoBehaviour {
 			power = "neutral";
 			animator.SetBool("Fire",false);
 			animator.SetBool("Neutral",true);
+		}else if(power == "Wizard"){
+			power = "neutral";
+			animator.SetBool("Wizard",false);
+			animator.SetBool("Neutral",true);
 		}
+		//button is 2nd canvas obj, so ind = 1
+		buttonDown = false;
+		buttonOn = false;
+		//UI.transform.GetChild(1).gameObject.SetActive(false);
+		UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
+		UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;
+		joybutton.pressed = false;
+
 
 	}
+	//-----------------------------------------------------------------------------------------------------
 
 	void usePower(){
 		Debug.Log("usePower:");
 
 		if(power == "Fire"){
 			Debug.Log("FIREBALL");
+			Rigidbody2D clone;
 			if(animator.GetBool("Up") == true){
-				Rigidbody2D clone;
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,90));
 			}else if(animator.GetBool("Down") == true){
-				Rigidbody2D clone;
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,270));
 			}else if(animator.GetBool("Right") == true){
-				Rigidbody2D clone;
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,0));
 			}else if(animator.GetBool("Left") == true){
-				Rigidbody2D clone;
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,180));
 			}
+		}else if(power == "Wizard"){
+			Debug.Log("BUNNY");
+			GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+			foreach(GameObject e in enemies){
+				Debug.Log("Turn into bunny");
+				e.GetComponent<EnemyController>().Bunny(wizardTimer);
+			}
+
+
 		}
 	}
+	//-----------------------------------------------------------------------------------------------------
 
 	void GameOver(){
 		if(controlsActive){
 			animator.SetBool("Hermes",false);
+			animator.SetBool("Fire",false);
+			animator.SetBool("Wizard",false);
 			animator.SetBool("Neutral",false);
 			animator.SetBool("Dead",true);
-			Canvas UI = Object.FindObjectOfType<Canvas>();
+			//Canvas UI = Object.FindObjectOfType<Canvas>();
 			for(int i=0; i< UI.transform.childCount; i++){
 				var child = UI.transform.GetChild(i).gameObject;
 				if(child.layer != 9){
@@ -242,4 +330,5 @@ public class PlayerController : MonoBehaviour {
 		rigidbody.velocity = Vector3.zero;
 
 	}
+	//-----------------------------------------------------------------------------------------------------
 }

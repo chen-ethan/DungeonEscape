@@ -7,6 +7,8 @@ public class EnemyController : MonoBehaviour {
 	// Use this for initialization
 	public Animator animator;
 
+	bool bunny;
+
 	public GameObject[] walkPoints;
 	public int currentPoint;
 
@@ -14,36 +16,72 @@ public class EnemyController : MonoBehaviour {
 
 	public string direction;
 
+	private float bunnyDuration;
+	private float bunnyTimer;
+
 	Rigidbody2D rigidbody;
 	void Start () {
 		currentPoint = 0;
 		rigidbody = GetComponent<Rigidbody2D>();
+		bunny = false;
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		//.Log("enemy direction: " + direction);
+		if(!bunny){
+			if(direction == ""){
+				direction = getDirection();
+			//	Debug.Log("enemy direction null");
+			}else if(direction == "Left"){
+				rigidbody.velocity = (Vector3.right * speed * -1);
+			//	Debug.Log("enemy direction left");
+			}else if(direction == "Right"){
+				rigidbody.velocity = (Vector3.right * speed);
+			//	Debug.Log("enemy direction right");
+			}else if(direction == "Up"){
+				rigidbody.velocity = (Vector3.up * speed);			
+			//	Debug.Log("enemy direction up");
+			}else if(direction == "Down"){
+				rigidbody.velocity = (Vector3.up * speed * -1);
+			//	Debug.Log("enemy direction down");
+				//float dist_away = walkPoints[currentPoint].transform.position.x - transform.position.x;
 
-		if(direction == ""){
-			direction = getDirection();
-		//	Debug.Log("enemy direction null");
-		}else if(direction == "Left"){
-			rigidbody.velocity = (Vector3.right * speed * -1);
-		//	Debug.Log("enemy direction left");
-		}else if(direction == "Right"){
-			rigidbody.velocity = (Vector3.right * speed);
-		//	Debug.Log("enemy direction right");
-		}else if(direction == "Up"){
-			rigidbody.velocity = (Vector3.up * speed);			
-		//	Debug.Log("enemy direction up");
-		}else if(direction == "Down"){
-			rigidbody.velocity = (Vector3.up * speed * -1);
-		//	Debug.Log("enemy direction down");
-			//float dist_away = walkPoints[currentPoint].transform.position.x - transform.position.x;
-
+			}
+		}else{
+			rigidbody.velocity = Vector3.zero;
+			bunnyTimer += Time.deltaTime;
+			if(bunnyTimer >= bunnyDuration){
+				resetBunny();
+			}
 		}
-		
+	}
+
+	public void Bunny(float Time){
+		if(!bunny){
+			Debug.Log("EnemyC: setBunny");
+			bunny = true;
+			bunnyDuration = Time;
+			bunnyTimer = 0.0f;
+			animator.SetBool("Down",false);
+			animator.SetBool("Up",false);
+			animator.SetBool("Right",false);
+			animator.SetBool("Left",false);
+			animator.SetBool("Bunny",true);
+			this.gameObject.tag = "Bunny";
+			this.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+		}
+	}
+
+	public void resetBunny(){
+
+		Debug.Log("EnemyC: RE - setBunny");
+		bunny = false;
+		animator.SetBool("Bunny",false);
+		this.gameObject.tag = "Enemy";
+		this.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+
 	}
 	void OnTriggerEnter2D(Collider2D other){
 		if(other == walkPoints[currentPoint].GetComponent<Collider2D>()){

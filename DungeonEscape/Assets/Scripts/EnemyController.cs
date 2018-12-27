@@ -6,16 +6,14 @@ public class EnemyController : MonoBehaviour {
 
 	// Use this for initialization
 	public Animator animator;
-
-	bool bunny;
-
 	public GameObject[] walkPoints;
 	public int currentPoint;
 
+	//-----------------------
 	public float speed;
-
 	public string direction;
-
+	//-----------------------
+	bool bunny;
 	private float bunnyDuration;
 	private float bunnyTimer;
 
@@ -57,6 +55,7 @@ public class EnemyController : MonoBehaviour {
 			}
 		}
 	}
+	//-----------------------------------------------------------------------------------------------------
 
 	public void Bunny(float Time){
 		if(!bunny){
@@ -73,6 +72,7 @@ public class EnemyController : MonoBehaviour {
 			this.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
 		}
 	}
+	//-----------------------------------------------------------------------------------------------------
 
 	public void resetBunny(){
 
@@ -83,12 +83,15 @@ public class EnemyController : MonoBehaviour {
 		this.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
 
 	}
+	//-----------------------------------------------------------------------------------------------------
+
 	void OnTriggerEnter2D(Collider2D other){
 		if(other == walkPoints[currentPoint].GetComponent<Collider2D>()){
 			currentPoint = (currentPoint + 1)% walkPoints.Length;
 			direction = getDirection();
 		}
 	}
+	//-----------------------------------------------------------------------------------------------------
 	string getDirection(){
 		float x_away = walkPoints[currentPoint].transform.position.x - transform.position.x;
 		float y_away = walkPoints[currentPoint].transform.position.y - transform.position.y;

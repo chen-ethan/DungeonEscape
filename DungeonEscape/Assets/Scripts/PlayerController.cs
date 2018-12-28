@@ -7,23 +7,23 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
-	public EnemyController enemyController;
 	public Animator animator;
-	Canvas UI;
+	//-----------------------
+	Canvas UI;	
+	private bool controlsActive;
+
 	protected Joystick joystick;
 	protected JoyButton joybutton;
 	private bool buttonOn;
-
-
 	protected bool buttonDown;
 	private float buttonTimer;
 	private float buttonCooldown;
-
 	public float joyStickSens;
+	//-----------------------
 	public int level;
-
 	public int Health;
 	public Image[] Hearts;
+	//-----------------------
 	private bool startTimer;
 	private float powerTimer;
 	public float hermesTimer;
@@ -31,29 +31,26 @@ public class PlayerController : MonoBehaviour {
 	private float powerCooldown;
 
 //	public float FireCooldown;
-
+//-----------------------
 	private int buttonStock;
 	public int fireballStock;
 	public int wizardStock;
-
+//-----------------------
 	public Rigidbody2D FireBall; 
-
-
 	public GameObject spawn;
 	public bool hasKey;
-
 	public string power;
-
-	private bool controlsActive;
-
 	Rigidbody2D rigidbody;
+	//-----------------------
+	GameObject[] enemies;
+	Vector3[] enemyLocations;
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this.gameObject);
 		level = 1;
-		Debug.Log("level: "+ level);
 		UI = Object.FindObjectOfType<Canvas>();
 		//UI.transform.GetChild(1).gameObject.SetActive(false);
+		enemyLocations = new Vector3[30];
 
 		setToSpawn();
 		joystick = FindObjectOfType<Joystick>();
@@ -67,6 +64,8 @@ public class PlayerController : MonoBehaviour {
 		for(int i = 0; i < Health; ++i){
 			Hearts[i].GetComponent<Image>().enabled = true;
 		}
+		//enemyLocations[0] = this.transform;
+		//Debug.Log(enemyLocations[0]);
 		buttonTimer = 0.0f;
 		startTimer = false;
 	}
@@ -167,6 +166,7 @@ public class PlayerController : MonoBehaviour {
 			if(Health>0){
 				enableAllObjects();
 				resetPower();
+				resetEnemies();
 				setToSpawn();
 			}
 		}
@@ -239,6 +239,13 @@ public class PlayerController : MonoBehaviour {
 
 		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		transform.position = spawn.transform.position;
+		enemies = GameObject.FindGameObjectsWithTag("Enemy");
+		for(int i = 0; i < enemies.Length; ++i){
+			Debug.Log(enemies[i].transform);
+			enemyLocations[i] = enemies[i].transform.position;
+			Debug.Log(enemyLocations[i]);
+
+		}
 	}
 	//-----------------------------------------------------------------------------------------------------
 
@@ -251,6 +258,16 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 	//-----------------------------------------------------------------------------------------------------
+	void resetEnemies(){
+		for(int i = 0; i < enemies.Length; ++i){
+			enemies[i].transform.position = enemyLocations[i];
+			enemies[i].GetComponent<SpriteRenderer>().enabled = true;
+			enemies[i].GetComponent<BoxCollider2D>().enabled = true;
+			enemies[i].gameObject.GetComponent<FollowEnemyController>().Start();
+		}
+	}
+	//-----------------------------------------------------------------------------------------------------
+
 
 	void resetPower(){
 		startTimer = false;
@@ -297,10 +314,10 @@ public class PlayerController : MonoBehaviour {
 			}
 		}else if(power == "Wizard"){
 			Debug.Log("BUNNY");
-			GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+			//GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 			foreach(GameObject e in enemies){
 				Debug.Log("Turn into bunny");
-				e.GetComponent<EnemyController>().Bunny(wizardTimer);
+				e.GetComponent<FollowEnemyController>().Bunny(wizardTimer);
 			}
 
 

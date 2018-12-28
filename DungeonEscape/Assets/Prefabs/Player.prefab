@@ -670,7 +670,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1929143380315050}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -683,7 +683,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: a6c56474666ce0647bdb766e9b4764b3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 31535de0a02add648948606abebf04bf, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -775,6 +775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc0b109c7cda4c64fa55d6e2dde2539b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyController: {fileID: 0}
   animator: {fileID: 95654064597170726}
   joyStickSens: 5
   level: 0
@@ -785,7 +786,11 @@ MonoBehaviour:
   - {fileID: 114972533943561698}
   - {fileID: 114640028711369346}
   - {fileID: 114493243782917234}
-  powerCooldown: 10
+  hermesTimer: 7
+  wizardTimer: 5
+  fireballStock: 3
+  wizardStock: 1
+  FireBall: {fileID: 50395583938755640, guid: 3ebd1b290ba169844a8a4dab92c5fc1c, type: 2}
   spawn: {fileID: 0}
   hasKey: 0
   power: 
@@ -1026,11 +1031,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1929143380315050}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c506a4ae8d8dbd546bb0555477ce68a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pressed: 0
 --- !u!114 &114940397620453862
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1480,8 +1486,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1121, y: -394.3}
-  m_SizeDelta: {x: -2241.9, y: -851.7}
+  m_AnchoredPosition: {x: 1088.2, y: -377.11}
+  m_SizeDelta: {x: -2176.1, y: -754.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224949410460597072
 RectTransform:

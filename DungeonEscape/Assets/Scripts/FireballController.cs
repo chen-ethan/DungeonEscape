@@ -27,8 +27,10 @@ public class FireballController : MonoBehaviour {
 
 		if(other.gameObject.CompareTag("Wall")){
 			Destroy(this.gameObject);
-		}else if(other.gameObject.CompareTag("Enemy")){
-			Destroy(other.gameObject);
+		}else if(other.gameObject.CompareTag("Enemy") && other.isTrigger ==false){
+			//Destroy(other.gameObject);
+			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 			Destroy(this.gameObject);
 
 		}

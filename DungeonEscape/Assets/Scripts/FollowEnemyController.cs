@@ -93,7 +93,6 @@ public class FollowEnemyController : MonoBehaviour {
 				//float dist_away = walkPoints[currentPoint].transform.position.x - transform.position.x;
 
 			}
-			Debug.Log("Should set speed");
 			animator.SetFloat("Speed",Mathf.Abs(rigidbody.velocity.x)+Mathf.Abs(rigidbody.velocity.y));
 
 		}else if(bunny){
@@ -109,7 +108,6 @@ public class FollowEnemyController : MonoBehaviour {
 
 	public void Bunny(float Time){
 		if(!bunny){
-			Debug.Log("EnemyC: setBunny");
 			bunny = true;
 			triggered = false;
 			bunnyDuration = Time;
@@ -128,7 +126,6 @@ public class FollowEnemyController : MonoBehaviour {
 
 	public void resetBunny(){
 
-		Debug.Log("EnemyC: RE - setBunny");
 		bunny = false;
 		animator.SetBool("Bunny",false);
 		this.gameObject.tag = "Enemy";
@@ -144,7 +141,7 @@ public class FollowEnemyController : MonoBehaviour {
 			currentPoint = (currentPoint + 1)% walkPoints.Length;
 			direction = getDirection();
 		}
-		if(other.gameObject.CompareTag("Player")){
+		if(!bunny && other.gameObject.CompareTag("Player")){
 			target = other.gameObject.transform;
 			triggered = true;
 		}

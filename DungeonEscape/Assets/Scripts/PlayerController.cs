@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 
 public class PlayerController : MonoBehaviour {
@@ -42,16 +43,17 @@ public class PlayerController : MonoBehaviour {
 	public string power;
 	Rigidbody2D rigidbody;
 	//-----------------------
+	public GameObject enemyManager;
 	GameObject[] enemies;
 	Vector3[] enemyLocations;
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this.gameObject);
 		level = 1;
-		UI = Object.FindObjectOfType<Canvas>();
+		UI = FindObjectOfType<Canvas>();
 		//UI.transform.GetChild(1).gameObject.SetActive(false);
-		enemyLocations = new Vector3[30];
-
+		//enemyLocations = new Vector3[30];
+		//enemies = GameObject.FindGameObjectsWithTag("Enemy");
 		setToSpawn();
 		joystick = FindObjectOfType<Joystick>();
 		joybutton = FindObjectOfType<JoyButton>();
@@ -66,6 +68,11 @@ public class PlayerController : MonoBehaviour {
 		}
 		//enemyLocations[0] = this.transform;
 		//Debug.Log(enemyLocations[0]);
+		/*
+		for(int i = 0; i < enemies.Length; ++i){
+			enemyLocations[i] = enemies[i].transform.position;
+			Debug.Log("enemyLocations["+i+"] = " + enemyLocations[i]);
+		}*/
 		buttonTimer = 0.0f;
 		startTimer = false;
 	}
@@ -88,7 +95,7 @@ public class PlayerController : MonoBehaviour {
 
 			if(buttonOn){
 				if(buttonStock > 0){
-					if(!buttonDown && joybutton.pressed == true&&/* buttonTimer >= buttonCooldown&& */ power!="neutral"){
+					if(!buttonDown && joybutton.pressed == true&& power!="neutral"){
 						buttonDown = true;
 						//buttonTimer = 0.0f;
 						buttonStock--;
@@ -150,10 +157,10 @@ public class PlayerController : MonoBehaviour {
 	}
 	//-----------------------------------------------------------------------------------------------------
 	void OnCollisionEnter2D(Collision2D other){
-		Debug.Log("Collider");
+		//Debug.Log("Collider");
 
 		if(other.gameObject.CompareTag("Enemy")){
-			Debug.Log("Collided with enemy");
+			//Debug.Log("Collided with enemy");
 			TakeDamage();
 		}
 	}
@@ -166,11 +173,13 @@ public class PlayerController : MonoBehaviour {
 			if(Health>0){
 				enableAllObjects();
 				resetPower();
-				resetEnemies();
 				setToSpawn();
+				enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
+				enemyManager.GetComponent<EnemyManager>().resetEnemies();
 			}
 		}
 	}
+
 	//-----------------------------------------------------------------------------------------------------
 	void OnTriggerEnter2D(Collider2D other){
 		//Debug.Log("Collided");
@@ -186,6 +195,7 @@ public class PlayerController : MonoBehaviour {
 			this.level++;
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 			setToSpawn();
+
 		}else if(other.gameObject.CompareTag("Shoe")){
 			resetPower();
 			power = "Hermes";
@@ -235,18 +245,8 @@ public class PlayerController : MonoBehaviour {
 		//resetPower();
 		
 		spawn = GameObject.FindGameObjectsWithTag("Respawn")[0];
-		//Debug.Log("Spawn position 2: "+ spawn.transform.position);
-
-		//Debug.Log("Spawns[length] = " + GameObject.FindGameObjectsWithTag("Respawn").Length);
 		transform.position = spawn.transform.position;
-		enemies = GameObject.FindGameObjectsWithTag("Enemy");
-		for(int i = 0; i < enemies.Length; ++i){
-			Debug.Log(enemies[i].transform);
-			enemyLocations[i] = enemies[i].transform.position;
-			Debug.Log(enemyLocations[i]);
-
-		}
-	}
+	} 
 	//-----------------------------------------------------------------------------------------------------
 
 	void enableAllObjects(){
@@ -260,6 +260,7 @@ public class PlayerController : MonoBehaviour {
 	//-----------------------------------------------------------------------------------------------------
 	void resetEnemies(){
 		for(int i = 0; i < enemies.Length; ++i){
+			Debug.Log("RESET: i = " + i);
 			enemies[i].transform.position = enemyLocations[i];
 			enemies[i].GetComponent<SpriteRenderer>().enabled = true;
 			enemies[i].GetComponent<BoxCollider2D>().enabled = true;
@@ -298,10 +299,8 @@ public class PlayerController : MonoBehaviour {
 	//-----------------------------------------------------------------------------------------------------
 
 	void usePower(){
-		Debug.Log("usePower:");
 
 		if(power == "Fire"){
-			Debug.Log("FIREBALL");
 			Rigidbody2D clone;
 			if(animator.GetBool("Up") == true){
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,90));
@@ -313,10 +312,8 @@ public class PlayerController : MonoBehaviour {
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,180));
 			}
 		}else if(power == "Wizard"){
-			Debug.Log("BUNNY");
 			//GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 			foreach(GameObject e in enemies){
-				Debug.Log("Turn into bunny");
 				e.GetComponent<FollowEnemyController>().Bunny(wizardTimer);
 			}
 

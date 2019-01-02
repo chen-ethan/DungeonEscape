@@ -23,7 +23,7 @@ public class FireballController : MonoBehaviour {
 		}
 	}*/
 	void OnTriggerEnter2D(Collider2D other){
-		Debug.Log("Fireball Collided");
+		//Debug.Log("Fireball Collided");
 
 		if(other.gameObject.CompareTag("Wall")){
 			Destroy(this.gameObject);

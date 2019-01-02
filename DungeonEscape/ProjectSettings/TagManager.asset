@@ -12,6 +12,7 @@ TagManager:
   - Wand
   - Wall
   - Bunny
+  - EnemyManager
   layers:
   - Default
   - TransparentFX

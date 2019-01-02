@@ -12,6 +12,11 @@ public class FollowEnemyController : MonoBehaviour {
 	public bool Follow;
 	private bool triggered;
 //-----------------------
+
+	private bool blind;
+	private float blindDuration;
+	static private float blindTimer;
+//-----------------------
 	public float speed;
 	public string direction;
 //-----------------------
@@ -33,6 +38,7 @@ public class FollowEnemyController : MonoBehaviour {
 		rigidbody.velocity = Vector2.zero;
 		target= transform;
 		triggered = false;
+		blind = false;
 		animator.SetBool("Bunny", false);
 		animator.SetBool("Right", false);
 		animator.SetBool("Left", false);
@@ -44,7 +50,7 @@ public class FollowEnemyController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(triggered && Follow){
+		if(triggered && Follow && !blind){
 			transform.position = Vector2.MoveTowards(transform.position, target.position, speed*Time.deltaTime);
 			animator.SetFloat("Speed",speed);
 			float x_dif = transform.position.x - target.position.x;
@@ -98,10 +104,37 @@ public class FollowEnemyController : MonoBehaviour {
 		}else if(bunny){
 			rigidbody.velocity = Vector3.zero;
 			animator.SetFloat("Speed", 0.0f);
-			bunnyTimer += Time.deltaTime;
+			/*
+			bunnyTimer += Time.fixedDeltaTime;
 			if(bunnyTimer >= bunnyDuration){
 				resetBunny();
 			}
+			*/
+		}
+		if(blind){
+			animator.SetFloat("Speed", 0.0f);
+			/*
+			blindTimer += Time.fixedDeltaTime;
+			if(blindTimer >= blindDuration){
+				swapBlind(0.0f);
+				Debug.Log("Enemy: Blind Done");
+			}
+			*/
+		}
+	}
+
+	public void swapBlind(float Time){
+		if(!blind){
+			triggered = false;
+			blind = true;
+			blindDuration = Time;
+			blindTimer = 0.0f;
+			animator.SetBool("Down",true);
+			animator.SetBool("Up",false);
+			animator.SetBool("Right",false);
+			animator.SetBool("Left",false);
+		}else{
+			blind = false;
 		}
 	}
 //-----------------------------------------------------------------------------------------------------
@@ -120,6 +153,12 @@ public class FollowEnemyController : MonoBehaviour {
 			this.gameObject.tag = "Bunny";
 			//this.gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
 			this.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+		}else{
+			bunny = false;
+			animator.SetBool("Bunny",false);
+			this.gameObject.tag = "Enemy";
+			this.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
 		}
 	}
 	//-----------------------------------------------------------------------------------------------------
@@ -141,7 +180,7 @@ public class FollowEnemyController : MonoBehaviour {
 			currentPoint = (currentPoint + 1)% walkPoints.Length;
 			direction = getDirection();
 		}
-		if(!bunny && other.gameObject.CompareTag("Player")){
+		if(!bunny && !blind && other.gameObject.CompareTag("Player")){
 			target = other.gameObject.transform;
 			triggered = true;
 		}
@@ -181,6 +220,9 @@ public class FollowEnemyController : MonoBehaviour {
 			}
 		}
 	}
+
+
+
 	
 
 }

@@ -13,6 +13,7 @@ TagManager:
   - Wall
   - Bunny
   - EnemyManager
+  - Eye
   layers:
   - Default
   - TransparentFX

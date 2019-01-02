@@ -27,4 +27,16 @@ public class EnemyManager : MonoBehaviour {
 			enemies[i].gameObject.GetComponent<FollowEnemyController>().Start();
 		}
 	}
+
+	public void BunnyAll(float wizardTimer){
+		foreach(GameObject e in enemies){
+			e.GetComponent<FollowEnemyController>().Bunny(wizardTimer);
+		}
+	}
+
+	public void swapBlindAll(float camoTimer){
+		foreach(GameObject e in enemies){
+			e.GetComponent<FollowEnemyController>().swapBlind(camoTimer);
+		}
+	}
 }

@@ -29,6 +29,8 @@ public class PlayerController : MonoBehaviour {
 	private float powerTimer;
 	public float hermesTimer;
 	public float wizardTimer;
+
+	public float camoTimer;
 	private float powerCooldown;
 
 //	public float FireCooldown;
@@ -36,6 +38,8 @@ public class PlayerController : MonoBehaviour {
 	private int buttonStock;
 	public int fireballStock;
 	public int wizardStock;
+
+	public int camoStock;
 //-----------------------
 	public Rigidbody2D FireBall; 
 	public GameObject spawn;
@@ -54,7 +58,7 @@ public class PlayerController : MonoBehaviour {
 		//UI.transform.GetChild(1).gameObject.SetActive(false);
 		//enemyLocations = new Vector3[30];
 		//enemies = GameObject.FindGameObjectsWithTag("Enemy");
-		setToSpawn();
+		power = "neutral";
 		joystick = FindObjectOfType<Joystick>();
 		joybutton = FindObjectOfType<JoyButton>();
 		buttonOn = false;
@@ -63,6 +67,7 @@ public class PlayerController : MonoBehaviour {
 		animator.SetBool("Neutral",true);
 		rigidbody =  GetComponent<Rigidbody2D>(); 
 		controlsActive = true;
+
 		for(int i = 0; i < Health; ++i){
 			Hearts[i].GetComponent<Image>().enabled = true;
 		}
@@ -75,6 +80,8 @@ public class PlayerController : MonoBehaviour {
 		}*/
 		buttonTimer = 0.0f;
 		startTimer = false;
+		setToSpawn();
+
 	}
 	//-----------------------------------------------------------------------------------------------------
 
@@ -85,11 +92,12 @@ public class PlayerController : MonoBehaviour {
 		}else{
 
 			if(startTimer){
-				powerTimer += Time.deltaTime;
+				powerTimer += Time.fixedDeltaTime;
 				//buttonTimer += Time.deltaTime;
 				if(powerTimer >= powerCooldown){
 					Debug.Log("powerTimer up");
 					resetPower();
+					
 				}
 			}
 
@@ -120,6 +128,17 @@ public class PlayerController : MonoBehaviour {
 						case "Fire":
 							Debug.Log("Used all Fire Stock");
 							resetPower();
+							break;
+						case "Camo":
+							Debug.Log("Used all Camo Stock");
+							powerTimer = 0.0f;
+							powerCooldown = camoTimer;
+							startTimer = true;
+							buttonDown = false;
+							buttonOn = false;
+							UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
+							UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;
+							joybutton.pressed = false;
 							break;
 					}
 				}
@@ -172,7 +191,7 @@ public class PlayerController : MonoBehaviour {
 			Hearts[Health].GetComponent<Image>().enabled = false;
 			if(Health>0){
 				enableAllObjects();
-				resetPower();
+				//resetPower();
 				setToSpawn();
 				enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
 				enemyManager.GetComponent<EnemyManager>().resetEnemies();
@@ -236,13 +255,23 @@ public class PlayerController : MonoBehaviour {
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
 
+		}else if(other.gameObject.CompareTag("Eye")){
+			resetPower();
+			UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
+			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = true;
+			buttonOn = true;
+			power = "Camo";
+			buttonStock = camoStock;
+			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+
 		}
 
 	}
 	//-----------------------------------------------------------------------------------------------------
 	void setToSpawn(){
 		hasKey = false;
-		//resetPower();
+		resetPower();
 		
 		spawn = GameObject.FindGameObjectsWithTag("Respawn")[0];
 		transform.position = spawn.transform.position;
@@ -258,17 +287,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 	//-----------------------------------------------------------------------------------------------------
-	void resetEnemies(){
-		for(int i = 0; i < enemies.Length; ++i){
-			Debug.Log("RESET: i = " + i);
-			enemies[i].transform.position = enemyLocations[i];
-			enemies[i].GetComponent<SpriteRenderer>().enabled = true;
-			enemies[i].GetComponent<BoxCollider2D>().enabled = true;
-			enemies[i].gameObject.GetComponent<FollowEnemyController>().Start();
-		}
-	}
-	//-----------------------------------------------------------------------------------------------------
-
+	
 
 	void resetPower(){
 		startTimer = false;
@@ -285,6 +304,14 @@ public class PlayerController : MonoBehaviour {
 			power = "neutral";
 			animator.SetBool("Wizard",false);
 			animator.SetBool("Neutral",true);
+			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
+			enemyManager.GetComponent<EnemyManager>().BunnyAll(0.0f);
+		}else if(power == "Camo"){
+			power = "neutral";
+			animator.SetBool("Camo",false);
+			animator.SetBool("Neutral",true);
+			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
+			enemyManager.GetComponent<EnemyManager>().swapBlindAll(0.0f);
 		}
 		//button is 2nd canvas obj, so ind = 1
 		buttonDown = false;
@@ -312,12 +339,14 @@ public class PlayerController : MonoBehaviour {
 				clone = Instantiate(FireBall,this.transform.position,Quaternion.Euler(0,0,180));
 			}
 		}else if(power == "Wizard"){
-			//GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-			foreach(GameObject e in enemies){
-				e.GetComponent<FollowEnemyController>().Bunny(wizardTimer);
-			}
+			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
+			enemyManager.GetComponent<EnemyManager>().BunnyAll(wizardTimer);
 
-
+		}else if(power == "Camo"){
+			animator.SetBool("Neutral",false);
+			animator.SetBool("Camo",true);
+			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
+			enemyManager.GetComponent<EnemyManager>().swapBlindAll(camoTimer);
 		}
 	}
 	//-----------------------------------------------------------------------------------------------------

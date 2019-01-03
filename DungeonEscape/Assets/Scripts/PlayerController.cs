@@ -115,7 +115,6 @@ public class PlayerController : MonoBehaviour {
 							buttonDown = false;
 							buttonOn = false;
 							UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
-							UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;
 							UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = false;
 							joybutton.pressed = false;
 							break;
@@ -131,7 +130,6 @@ public class PlayerController : MonoBehaviour {
 							buttonDown = false;
 							buttonOn = false;
 							UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
-							UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;		
 							UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = false;
 
 							joybutton.pressed = false;
@@ -226,7 +224,7 @@ public class PlayerController : MonoBehaviour {
 		}else if(other.gameObject.CompareTag("FireBall")){
 			resetPower();
 			UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
-			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = true;
+			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().setButton(0);
 
 			buttonOn = true;
 			power = "Fire";
@@ -243,7 +241,7 @@ public class PlayerController : MonoBehaviour {
 			resetPower();
 			//enable button TODO: change sprite
 			UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
-			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = true;
+			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().setButton(1);
 			buttonOn = true;
 			power = "Wizard";
 			animator.SetBool("Neutral",false);
@@ -259,7 +257,7 @@ public class PlayerController : MonoBehaviour {
 		}else if(other.gameObject.CompareTag("Eye")){
 			resetPower();
 			UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
-			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = true;
+			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().setButton(2);
 			buttonOn = true;
 			power = "Camo";
 			buttonStock = camoStock;
@@ -323,7 +321,6 @@ public class PlayerController : MonoBehaviour {
 		buttonOn = false;
 		//UI.transform.GetChild(1).gameObject.SetActive(false);
 		UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
-		UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;
 		joybutton.pressed = false;
 
 
@@ -362,6 +359,7 @@ public class PlayerController : MonoBehaviour {
 			animator.SetBool("Fire",false);
 			animator.SetBool("Wizard",false);
 			animator.SetBool("Neutral",false);
+			animator.SetBool("Camo",false);
 			animator.SetBool("Dead",true);
 			//Canvas UI = Object.FindObjectOfType<Canvas>();
 			for(int i=0; i< UI.transform.childCount; i++){
@@ -373,6 +371,11 @@ public class PlayerController : MonoBehaviour {
 
 				}
 			}
+			//setToSpawn();
+			enableAllObjects();
+			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
+			enemyManager.GetComponent<EnemyManager>().resetEnemies();
+			
 
 		}
 		rigidbody.velocity = Vector3.zero;

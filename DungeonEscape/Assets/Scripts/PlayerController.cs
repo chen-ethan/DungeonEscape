@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour {
 	private float buttonCooldown;
 	public float joyStickSens;
 	//-----------------------
+	[HideInInspector]
 	public int level;
 	public int Health;
 	public Image[] Hearts;
@@ -42,22 +43,22 @@ public class PlayerController : MonoBehaviour {
 	public int camoStock;
 //-----------------------
 	public Rigidbody2D FireBall; 
+	[HideInInspector]
 	public GameObject spawn;
+	[HideInInspector]
 	public bool hasKey;
+	[HideInInspector]
+
 	public string power;
 	Rigidbody2D rigidbody;
 	//-----------------------
 	public GameObject enemyManager;
 	GameObject[] enemies;
 	Vector3[] enemyLocations;
-	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this.gameObject);
 		level = 1;
 		UI = FindObjectOfType<Canvas>();
-		//UI.transform.GetChild(1).gameObject.SetActive(false);
-		//enemyLocations = new Vector3[30];
-		//enemies = GameObject.FindGameObjectsWithTag("Enemy");
 		power = "neutral";
 		joystick = FindObjectOfType<Joystick>();
 		joybutton = FindObjectOfType<JoyButton>();
@@ -67,17 +68,9 @@ public class PlayerController : MonoBehaviour {
 		animator.SetBool("Neutral",true);
 		rigidbody =  GetComponent<Rigidbody2D>(); 
 		controlsActive = true;
-
 		for(int i = 0; i < Health; ++i){
 			Hearts[i].GetComponent<Image>().enabled = true;
 		}
-		//enemyLocations[0] = this.transform;
-		//Debug.Log(enemyLocations[0]);
-		/*
-		for(int i = 0; i < enemies.Length; ++i){
-			enemyLocations[i] = enemies[i].transform.position;
-			Debug.Log("enemyLocations["+i+"] = " + enemyLocations[i]);
-		}*/
 		buttonTimer = 0.0f;
 		startTimer = false;
 		setToSpawn();
@@ -85,7 +78,6 @@ public class PlayerController : MonoBehaviour {
 	}
 	//-----------------------------------------------------------------------------------------------------
 
-	// Update is called once per frame
 	void FixedUpdate () {
 		if(Health <= 0){
 			GameOver();
@@ -107,6 +99,7 @@ public class PlayerController : MonoBehaviour {
 						buttonDown = true;
 						//buttonTimer = 0.0f;
 						buttonStock--;
+						UI.transform.GetChild(2).gameObject.GetComponent<UIstock>().setStock(buttonStock);
 						usePower();
 					}
 					if(buttonDown && joybutton.pressed == false){
@@ -123,6 +116,7 @@ public class PlayerController : MonoBehaviour {
 							buttonOn = false;
 							UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
 							UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;
+							UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = false;
 							joybutton.pressed = false;
 							break;
 						case "Fire":
@@ -137,7 +131,9 @@ public class PlayerController : MonoBehaviour {
 							buttonDown = false;
 							buttonOn = false;
 							UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
-							UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;
+							UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = false;		
+							UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = false;
+
 							joybutton.pressed = false;
 							break;
 					}
@@ -231,12 +227,15 @@ public class PlayerController : MonoBehaviour {
 			resetPower();
 			UI.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
 			UI.transform.GetChild(1).gameObject.GetComponent<JoyButton>().enabled = true;
+
 			buttonOn = true;
 			power = "Fire";
 			animator.SetBool("Neutral",false);
 			animator.SetBool("Fire",true);
 			//buttonCooldown = FireCooldown;
 			buttonStock = fireballStock;
+			UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = true;
+			UI.transform.GetChild(2).gameObject.GetComponent<UIstock>().setStock(buttonStock);
 			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
@@ -250,6 +249,8 @@ public class PlayerController : MonoBehaviour {
 			animator.SetBool("Neutral",false);
 			animator.SetBool("Wizard",true);
 			buttonStock = wizardStock;
+			UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = true;
+			UI.transform.GetChild(2).gameObject.GetComponent<UIstock>().setStock(buttonStock);
 			//buttonCooldown = FireCooldown;
 			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
@@ -262,6 +263,8 @@ public class PlayerController : MonoBehaviour {
 			buttonOn = true;
 			power = "Camo";
 			buttonStock = camoStock;
+			UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = true;
+			UI.transform.GetChild(2).gameObject.GetComponent<UIstock>().setStock(buttonStock);
 			other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 			other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
@@ -305,14 +308,16 @@ public class PlayerController : MonoBehaviour {
 			animator.SetBool("Wizard",false);
 			animator.SetBool("Neutral",true);
 			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
-			enemyManager.GetComponent<EnemyManager>().BunnyAll(0.0f);
+			enemyManager.GetComponent<EnemyManager>().BunnyAll(false);
 		}else if(power == "Camo"){
 			power = "neutral";
 			animator.SetBool("Camo",false);
 			animator.SetBool("Neutral",true);
 			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
-			enemyManager.GetComponent<EnemyManager>().swapBlindAll(0.0f);
+			enemyManager.GetComponent<EnemyManager>().swapBlindAll(false);
 		}
+		UI.transform.GetChild(2).gameObject.GetComponent<Image>().enabled = false;
+		UI.transform.GetChild(2).gameObject.GetComponent<UIstock>().setStock(0);
 		//button is 2nd canvas obj, so ind = 1
 		buttonDown = false;
 		buttonOn = false;
@@ -340,13 +345,13 @@ public class PlayerController : MonoBehaviour {
 			}
 		}else if(power == "Wizard"){
 			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
-			enemyManager.GetComponent<EnemyManager>().BunnyAll(wizardTimer);
+			enemyManager.GetComponent<EnemyManager>().BunnyAll(true);
 
 		}else if(power == "Camo"){
 			animator.SetBool("Neutral",false);
 			animator.SetBool("Camo",true);
 			enemyManager = GameObject.FindGameObjectWithTag("EnemyManager");
-			enemyManager.GetComponent<EnemyManager>().swapBlindAll(camoTimer);
+			enemyManager.GetComponent<EnemyManager>().swapBlindAll(true);
 		}
 	}
 	//-----------------------------------------------------------------------------------------------------

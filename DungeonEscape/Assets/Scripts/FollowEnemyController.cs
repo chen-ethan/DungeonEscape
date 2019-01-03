@@ -14,8 +14,6 @@ public class FollowEnemyController : MonoBehaviour {
 //-----------------------
 
 	private bool blind;
-	private float blindDuration;
-	static private float blindTimer;
 //-----------------------
 	public float speed;
 	public string direction;
@@ -24,15 +22,12 @@ public class FollowEnemyController : MonoBehaviour {
 	Rigidbody2D rigidbody;
 //-----------------------
 	bool bunny;
-	private float bunnyDuration;
-	static private float bunnyTimer;
 
 
 	// Use this for initialization
 	public void Start () {
 		currentPoint = 0;
 		direction = "";
-		bunnyTimer = 0.0f;
 		bunny = false;
 		rigidbody = GetComponent<Rigidbody2D>();
 		rigidbody.velocity = Vector2.zero;
@@ -104,31 +99,18 @@ public class FollowEnemyController : MonoBehaviour {
 		}else if(bunny){
 			rigidbody.velocity = Vector3.zero;
 			animator.SetFloat("Speed", 0.0f);
-			/*
-			bunnyTimer += Time.fixedDeltaTime;
-			if(bunnyTimer >= bunnyDuration){
-				resetBunny();
-			}
-			*/
+
 		}
 		if(blind){
 			animator.SetFloat("Speed", 0.0f);
-			/*
-			blindTimer += Time.fixedDeltaTime;
-			if(blindTimer >= blindDuration){
-				swapBlind(0.0f);
-				Debug.Log("Enemy: Blind Done");
-			}
-			*/
+
 		}
 	}
 
-	public void swapBlind(float Time){
-		if(!blind){
+	public void swapBlind(bool enable){
+		if(!blind && enable){
 			triggered = false;
 			blind = true;
-			blindDuration = Time;
-			blindTimer = 0.0f;
 			animator.SetBool("Down",true);
 			animator.SetBool("Up",false);
 			animator.SetBool("Right",false);
@@ -139,12 +121,10 @@ public class FollowEnemyController : MonoBehaviour {
 	}
 //-----------------------------------------------------------------------------------------------------
 
-	public void Bunny(float Time){
-		if(!bunny){
+	public void Bunny(bool enable){
+		if(!bunny && enable){
 			bunny = true;
 			triggered = false;
-			bunnyDuration = Time;
-			bunnyTimer = 0.0f;
 			animator.SetBool("Down",false);
 			animator.SetBool("Up",false);
 			animator.SetBool("Right",false);
@@ -161,18 +141,7 @@ public class FollowEnemyController : MonoBehaviour {
 
 		}
 	}
-	//-----------------------------------------------------------------------------------------------------
 
-	public void resetBunny(){
-
-		bunny = false;
-		animator.SetBool("Bunny",false);
-		this.gameObject.tag = "Enemy";
-		this.gameObject.GetComponent<BoxCollider2D>().enabled = true;
-
-//		this.gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
-
-	}
 	//-----------------------------------------------------------------------------------------------------
 
 	void OnTriggerEnter2D(Collider2D other){

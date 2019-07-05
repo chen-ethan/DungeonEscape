@@ -46,8 +46,11 @@ public class FollowEnemyController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(triggered && Follow && !blind){
-			transform.position = Vector2.MoveTowards(transform.position, target.position, speed*Time.deltaTime);
-			animator.SetFloat("Speed",speed);
+            //transform.position = Vector2.MoveTowards(transform.position, target.position, speed*Time.deltaTime);
+            var moveVector = transform.position - target.position;
+            rigidbody.velocity = (moveVector * speed *-1);
+
+            animator.SetFloat("Speed",speed);
 			float x_dif = transform.position.x - target.position.x;
 			float y_dif = transform.position.y - target.position.y;
 			if(Mathf.Abs(x_dif) > Mathf.Abs(y_dif)){

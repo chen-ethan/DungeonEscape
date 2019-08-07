@@ -26,6 +26,11 @@ public class PlayerController : MonoBehaviour {
 	private float buttonTimer;
 	private float buttonCooldown;
 	public float joyStickSens;
+
+    //--------
+    //Pause button
+    protected PauseButton pausebutton;
+    public bool paused;
 	//-----------------------
 	[HideInInspector]
 	public int level;
@@ -63,6 +68,7 @@ public class PlayerController : MonoBehaviour {
 	Vector3[] enemyLocations;
 	void Start () {
         stopped = false;
+        paused = false;
 
         Tut = GameObject.Find("Tutorial Controller");
 
@@ -73,6 +79,7 @@ public class PlayerController : MonoBehaviour {
 		power = "neutral";
 		joystick = FindObjectOfType<Joystick>();
 		joybutton = FindObjectOfType<JoyButton>();
+        pausebutton = FindObjectOfType<PauseButton>();
 		buttonOn = false;
 		buttonDown = false;
 		hasKey = false;
@@ -88,6 +95,24 @@ public class PlayerController : MonoBehaviour {
 
 	}
 	//-----------------------------------------------------------------------------------------------------
+    //move down later - pause
+    public void pause(bool y)
+    {
+        if (y)
+        {
+            paused = true;
+            Time.timeScale = 0;
+            Debug.Log("pressed pause");
+        }
+        else
+        {
+            paused = true;
+            Time.timeScale = 1;
+            Debug.Log("resume pause");
+        }
+        
+    }
+
 
 	void FixedUpdate () {
 		if(Health <= 0){
@@ -103,8 +128,26 @@ public class PlayerController : MonoBehaviour {
 					
 				}
 			}
+            //pause
+            /*
+            Debug.Log("pause: " + pausebutton.pressed);
+            if (pausebutton.paused == true && !paused)
+            {
+                paused = true;
+                Time.timeScale = 0;
+                Debug.Log("pressed pause");
+                //pausePanel.SetActive(true);
+                //Disable scripts that still work while timescale is set to 0
+            }else if (pausebutton.paused == false )
+            {
+                paused = false;
+                Time.timeScale = 1;
+                Debug.Log("resume pause");
 
-			if(buttonOn){
+            }
+            */
+
+            if (buttonOn){
 				if(buttonStock > 0){
 					if(!buttonDown && joybutton.pressed == true&& power!="neutral"){
 						buttonDown = true;
@@ -409,5 +452,19 @@ public class PlayerController : MonoBehaviour {
 		rigidbody.velocity = Vector3.zero;
 
 	}
+
+    public void SavePlayer(int i)
+    {
+        SaveSystem.SavePlayer(this,i);
+    }
+
+    public void LoadPlayer(int i)
+    {
+        PlayerData data = SaveSystem.LoadPlayer(i);
+
+        level = data.level;
+        Health = data.health;
+
+    }
 	//-----------------------------------------------------------------------------------------------------
 }

@@ -907,7 +907,18 @@ Prefab:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 224374599939260032, guid: 85250c6568145804881bec396ce8ba46,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 224943168971313698, guid: 85250c6568145804881bec396ce8ba46,
+        type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114788450911200950, guid: 85250c6568145804881bec396ce8ba46, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 85250c6568145804881bec396ce8ba46, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &243284493
@@ -4943,6 +4954,25 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1243027346}
   m_CullTransparentMesh: 0
+--- !u!1 &1303465555 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1178852704296474, guid: 85250c6568145804881bec396ce8ba46,
+    type: 2}
+  m_PrefabInternal: {fileID: 241082228}
+--- !u!114 &1303465556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1303465555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d7966c087bb144b8ed55b7b46c8be5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pressed: 0
+  AlphaThreshold: 0.1
+  buttons: []
 --- !u!1 &1329874678
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,11 +19,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4834794676753702}
+  - component: {fileID: 114048927574804608}
   - component: {fileID: 212122673196290914}
   - component: {fileID: 61885207895131488}
   - component: {fileID: 50998025907905244}
   - component: {fileID: 95170011660188886}
-  - component: {fileID: 114048927574804608}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy

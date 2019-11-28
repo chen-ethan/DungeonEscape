@@ -43719,11 +43719,11 @@ Prefab:
     - target: {fileID: 212271555758867304, guid: a5029ef61aeeaf54fafa219970da8141,
         type: 2}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1732566563127788, guid: a5029ef61aeeaf54fafa219970da8141, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5029ef61aeeaf54fafa219970da8141, type: 2}
